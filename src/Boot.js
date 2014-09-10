@@ -27,71 +27,59 @@ BasicGame.Boot.prototype = {
 
     },
 
-    create: function () {
+	create: function () {
 
-        this.input.maxPointers = 1;
-        this.stage.disableVisibilityChange = true;
+		this.input.maxPointers = 1;
+		this.stage.disableVisibilityChange = true;
 
-        BasicGame.orientated = true;
-        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-        this.scale.minWidth = this.game.width / 2;
-        this.scale.minHeight = this.game.height / 2;
+		BasicGame.orientated = true;
+		this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+		this.scale.minWidth = this.game.width / 2;
+		this.scale.minHeight = this.game.height / 2;
+		this.scale.pageAlignHorizontally = true;
+		this.scale.pageAlignVertically = true;
+		if (this.game.device.desktop)
+		{
+			this.scale.maxWidth = this.game.width;
+			this.scale.maxHeight = this.game.height;
+			this.scale.setScreenSize(true);
+		}
+		else
+		{
+			this.scale.maxWidth = this.game.width * 2.5;
+			this.scale.maxHeight = this.game.height * 2.5;
+			this.scale.forceOrientation(false, true);
+			this.scale.hasResized.add(this.gameResized, this);
+			this.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
+			this.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
+			this.scale.setScreenSize(true);
+		}
 
-        this.scale.pageAlignHorizontally = true;
-        this.scale.pageAlignVertically = true;
-	    if (this.game.device.desktop)
-        {
-	        this.scale.maxWidth = this.game.width;
-	        this.scale.maxHeight = this.game.height;
-            this.scale.setScreenSize(true);
-        }
-        else
-        {
-	        this.scale.maxWidth = this.game.width * 2.5;
-	        this.scale.maxHeight = this.game.height / 2.5;
-            this.scale.forceOrientation(false, true);
-            this.scale.hasResized.add(this.gameResized, this);
-            this.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
-            this.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
-            this.scale.setScreenSize(true);
+		this.state.start('CheckOrientation');
+	},
 
-	        var ow = parseInt(this.game.canvas.style.width,10);
-	        var oh = parseInt(this.game.canvas.style.height,10);
-	        var r = Math.max(window.innerWidth/ow,window.innerHeight/oh);
-	        var nw = ow*r;
-	        var nh = oh*r;
-	        this.game.canvas.style.width = nw+"px";
-	        this.game.canvas.style.height= nh+"px";
-	        this.game.canvas.style.marginLeft = (window.innerWidth/2 - nw/2)+"px";
-	        this.game.canvas.style.marginTop = (window.innerHeight/2 - nh/2)+"px";
-	        document.getElementById("game").style.width = window.innerWidth+"px";
-	        document.getElementById("game").style.height = window.innerHeight-1+"px";//The css for body includes 1px top margin, I believe this is the cause for this -1
-	        document.getElementById("game").style.overflow = "hidden";
-        }
+	gameResized: function (width, height) {
 
-        this.state.start('CheckOrientation');
-    },
+		//  This could be handy if you need to do any extra processing if the game resizes.
+		//  A resize could happen if for example swapping orientation on a device.
 
-    gameResized: function (width, height) {
+	},
 
-        //  This could be handy if you need to do any extra processing if the game resizes.
-        //  A resize could happen if for example swapping orientation on a device.
+	enterIncorrectOrientation: function () {
 
-    },
+		BasicGame.orientated = false;
 
-    enterIncorrectOrientation: function () {
+		document.getElementById('orientation').style.display = 'block';
 
-        BasicGame.orientated = false;
+	},
 
-        document.getElementById('orientation').style.display = 'block';
+	leaveIncorrectOrientation: function () {
 
-    },
+		BasicGame.orientated = true;
 
-    leaveIncorrectOrientation: function () {
+		document.getElementById('orientation').style.display = 'none';
+		this.scale.setScreenSize(true);
 
-        BasicGame.orientated = true;
-
-        document.getElementById('orientation').style.display = 'none';
-    }
+	}
 
 };
