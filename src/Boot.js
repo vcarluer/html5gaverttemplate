@@ -49,7 +49,7 @@ BasicGame.Boot.prototype = {
         {
 	        this.scale.maxWidth = this.game.width * 2.5;
 	        this.scale.maxHeight = this.game.height / 2.5;
-            this.scale.forceOrientation(true, false);
+            this.scale.forceOrientation(false, true);
             this.scale.hasResized.add(this.gameResized, this);
             this.scale.enterIncorrectOrientation.add(this.enterIncorrectOrientation, this);
             this.scale.leaveIncorrectOrientation.add(this.leaveIncorrectOrientation, this);
@@ -92,8 +92,6 @@ BasicGame.Boot.prototype = {
         BasicGame.orientated = true;
 
         document.getElementById('orientation').style.display = 'none';
-        this.scale.setScreenSize(true);
-
     }
 
 };
